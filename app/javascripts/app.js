@@ -7,9 +7,11 @@ import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import stock_exchange_artifacts from '../../build/contracts/StockExchange.json'
+import donger_bank_artifacts from '../../build/contracts/DongerBank.json'
 
 
 var StockExchange = contract(stock_exchange_artifacts);
+var DongerBank = contract(donger_bank_artifacts);
 
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
@@ -84,7 +86,7 @@ window.App = {
       balance_element.innerHTML = web3.fromWei(etherBalance,"ether").toNumber();      
     })  
 
-  },
+  }, 
 
   buy: function() {
     var self = this;
@@ -114,7 +116,24 @@ window.App = {
       console.log(e);
       self.setStatus("Error sending coin; see log.");
     });
+  },
+
+  donger_input: function() {
+    console.log('Donger input');
+
+    /* TODO
+    DongerBank.deployed().then(function(instance) {
+      meta = instance;
+      return meta.vote();
+    }).then(function() {
+      console.log('voted');
+    }).catch(function(e) {
+      console.log(e);
+      console.log('not voted');
+    });
+    */
   }
+
 };
 
 window.addEventListener('load', function() {

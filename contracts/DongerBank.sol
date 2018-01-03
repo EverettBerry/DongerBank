@@ -36,7 +36,7 @@ interface Token {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
 }
 
-contract DongerBank is owned, tokenRecepient { 
+contract DongerBank is owned, tokenRecipient { 
     event Voted(uint dongerId, bool position, address boardClient, string justification);
 
     struct DongerBoard {
@@ -49,7 +49,7 @@ contract DongerBank is owned, tokenRecepient {
     struct Donger {
         string unicode;
         uint dongerId;
-        unint ranking;
+        uint ranking;
         Vote[] votes;
     }
 
