@@ -36,6 +36,28 @@ interface Token {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
 }
 
-contract DongerBank is owned, tokenRecepient {
+contract DongerBank is owned, tokenRecepient { 
+    event Voted(uint dongerId, bool position, address boardClient, string justification);
+
+    struct DongerBoard {
+        address boardClient;
+        string name;
+        // Start unicode sequence in solidity with \uNNNN
+        uint memberSince;
+    }
+
+    struct Donger {
+        string unicode;
+        uint dongerId;
+        unint ranking;
+        Vote[] votes;
+    }
+
+    struct Vote {
+        bool inSupport;
+        address voter;
+        string justification;
+    }
+
 }
 
