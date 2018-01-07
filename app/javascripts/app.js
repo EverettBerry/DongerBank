@@ -25,6 +25,7 @@ window.App = {
 
     // Bootstrap the StockExchange abstraction for Use.
     StockExchange.setProvider(web3.currentProvider);
+    DongerBank.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function(err, accs) {
@@ -53,6 +54,15 @@ window.App = {
         self.setStatus(result.args._type+" - "+ result.args.user);
       });
     });
+
+    // Listens for the DongerAdded event which happens when the contract is
+    // instantiated or when someone adds a new donger!
+    DongerBank.deployed().then(function(instance) {
+      instance.DongerAdded({dongerId: 1, commonName: 'shrug'},{fromBlock: 0, toBlock: 'latest'}).watch(function(err,result){
+        console.log('Donger added');
+      });
+    });
+
   },
 
   setStatus: function(message) {
@@ -118,20 +128,21 @@ window.App = {
     });
   },
 
+  // Testing function - reads from the contract every time something 
+  // is typed in the input box
   donger_input: function() {
     console.log('Donger input');
 
-    /* TODO
+    var meta;
     DongerBank.deployed().then(function(instance) {
       meta = instance;
-      return meta.vote();
-    }).then(function() {
-      console.log('voted');
+      return meta.getDongerById.call(0, {from: account}); 
+    }).then(function(dongerName) {
+      console.log(dongerName);
     }).catch(function(e) {
       console.log(e);
-      console.log('not voted');
+      console.log('call failed');
     });
-    */
   }
 
 };

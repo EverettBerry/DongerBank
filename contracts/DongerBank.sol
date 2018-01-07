@@ -15,49 +15,57 @@ contract owned {
     function transferOwnership(address newOwner) onlyOwner  public {
         owner = newOwner;
     }
+
 }
 
-contract tokenRecipient {
-    event receivedEther(address sender, uint amount);
-    event receivedTokens(address _from, uint256 _value, address _token, bytes _extraData);
+contract DongerBank is owned { 
+    uint currentDongerId;
+    Donger[] public dongers;
+    mapping (address => uint) public dongerBoardId;
+    DongerBoard[] public dongerBoards;
 
-    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public {
-        Token t = Token(_token);
-        require(t.transferFrom(_from, this, _value));
-        receivedTokens(_from, _value, _token, _extraData);
-    }
-
-    function () payable  public {
-        receivedEther(msg.sender, msg.value);
-    }
-}
-
-interface Token {
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
-}
-
-contract DongerBank is owned, tokenRecipient { 
-    event Voted(uint dongerId, bool position, address boardClient, string justification);
+    event Voted(uint dongerId, address boardClient);
+    event DongerAdded(string unicode, string commonName);
 
     struct DongerBoard {
         address boardClient;
         string name;
-        // Start unicode sequence in solidity with \uNNNN
         uint memberSince;
     }
 
     struct Donger {
         string unicode;
-        uint dongerId;
-        uint ranking;
-        Vote[] votes;
+        string commonName;
+        uint recordedSince;
+        uint numberOfVotes;
     }
 
-    struct Vote {
-        bool inSupport;
-        address voter;
-        string justification;
+    function DongerBank() payable public {
+        currentDongerId = 0;
+        addDonger(hex"C2AF5C5F28E38384295F2FC2AF", "shrug");
     }
 
+    function addDonger(string unicode, string commonName) {
+        currentDongerId = dongers.length++;
+        Donger storage d = dongers[currentDongerId];
+        d.unicode = unicode;
+        d.commonName = commonName;
+        d.recordedSince = now;
+        d.numberOfVotes = 0;
+        DongerAdded(unicode, commonName);
+    }
+
+    function voteDongers(uint dongerId) public returns (uint voteID) {
+        Donger storage d = dongers[dongerId];
+        // require(!d.voted[msg.sender]) TODO: not sure if needed/what does
+        d.numberOfVotes++;
+        Voted(dongerId, msg.sender);
+        return d.numberOfVotes;
+    }
+
+    function getDongerById(uint id) constant returns (string commonName) {
+        Donger storage d = dongers[id];
+        return d.commonName;
+    }
 }
 
